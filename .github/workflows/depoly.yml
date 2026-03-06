@@ -13,6 +13,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Debug repository structure
+        run: |
+          pwd
+          ls -la
+          find . -maxdepth 3 -type f
+
       - name: Verify required files
         run: |
           test -f ./Top-gun/index.html
@@ -28,15 +34,16 @@ jobs:
 
       - name: Upload website files to EC2 temp directory
         run: |
+          ssh -i ~/.ssh/id_ed25519 ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "mkdir -p /tmp/jet-site"
           rsync -avz --delete \
+            -e "ssh -i ~/.ssh/id_ed25519" \
             --exclude ".git" \
             --exclude ".github" \
-            ./ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/tmp/jet-site/
+            ./Top-gun/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/tmp/jet-site/
 
       - name: Deploy website on EC2
         run: |
-          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
-            mkdir -p /tmp/jet-site
+          ssh -i ~/.ssh/id_ed25519 ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
             sudo mkdir -p ${{ secrets.TARGET_DIR }}
             sudo rsync -av --delete /tmp/jet-site/ ${{ secrets.TARGET_DIR }}/
             sudo chown -R www-data:www-data ${{ secrets.TARGET_DIR }}
