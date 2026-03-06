@@ -10,21 +10,37 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup SSH
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
         run: |
+          if [ -z "$EC2_HOST" ]; then
+            echo "EC2_HOST secret is missing"
+            exit 1
+          fi
+
+          if [ -z "$EC2_SSH_KEY" ]; then
+            echo "EC2_SSH_KEY secret is missing"
+            exit 1
+          fi
+
           mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+          printf "%s\n" "$EC2_SSH_KEY" > ~/.ssh/ec2_key.pem
+          chmod 600 ~/.ssh/ec2_key.pem
+          ssh-keyscan -H "$EC2_HOST" >> ~/.ssh/known_hosts
 
       - name: Deploy Website to EC2
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
         run: |
-          rsync -avz --delete ./site/ ubuntu@${{ secrets.EC2_HOST }}:/var/www/top-gun-site/
+          rsync -avz --delete -e "ssh -i ~/.ssh/ec2_key.pem" ./site/ ubuntu@"$EC2_HOST":/var/www/top-gun-site/
 
       - name: Reload NGINX
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
         run: |
-          ssh ubuntu@${{ secrets.EC2_HOST }} "sudo systemctl reload nginx"
+          ssh -i ~/.ssh/ec2_key.pem ubuntu@"$EC2_HOST" "sudo systemctl reload nginx"
