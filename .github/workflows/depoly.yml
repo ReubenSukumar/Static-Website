@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: EC2-Deploy
 
     steps:
       - name: Checkout Repository
@@ -17,6 +18,8 @@ jobs:
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+          TARGET_DIR: ${{ secrets.TARGET_DIR }}
         run: |
           if [ -z "$EC2_HOST" ]; then
             echo "EC2_HOST secret is missing"
@@ -28,6 +31,16 @@ jobs:
             exit 1
           fi
 
+          if [ -z "$EC2_USER" ]; then
+            echo "EC2_USER secret is missing"
+            exit 1
+          fi
+
+          if [ -z "$TARGET_DIR" ]; then
+            echo "TARGET_DIR secret is missing"
+            exit 1
+          fi
+
           mkdir -p ~/.ssh
           printf "%s\n" "$EC2_SSH_KEY" > ~/.ssh/ec2_key.pem
           chmod 600 ~/.ssh/ec2_key.pem
@@ -36,11 +49,14 @@ jobs:
       - name: Deploy Website to EC2
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+          TARGET_DIR: ${{ secrets.TARGET_DIR }}
         run: |
-          rsync -avz --delete -e "ssh -i ~/.ssh/ec2_key.pem" ./site/ ubuntu@"$EC2_HOST":/var/www/top-gun-site/
+          rsync -avz --delete -e "ssh -i ~/.ssh/ec2_key.pem" ./site/ "$EC2_USER@$EC2_HOST:$TARGET_DIR/"
 
       - name: Reload NGINX
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
         run: |
-          ssh -i ~/.ssh/ec2_key.pem ubuntu@"$EC2_HOST" "sudo systemctl reload nginx"
+          ssh -i ~/.ssh/ec2_key.pem "$EC2_USER@$EC2_HOST" "sudo systemctl reload nginx"
