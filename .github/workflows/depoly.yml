@@ -8,55 +8,38 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: EC2-Deploy
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Verify required files
+        run: |
+          test -f index.html
+          test -f style.css
+          test -f assets/hero.jpg
+
       - name: Setup SSH
-        env:
-          EC2_HOST: ${{ secrets.EC2_HOST }}
-          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
-          EC2_USER: ${{ secrets.EC2_USER }}
-          TARGET_DIR: ${{ secrets.TARGET_DIR }}
         run: |
-          if [ -z "$EC2_HOST" ]; then
-            echo "EC2_HOST secret is missing"
-            exit 1
-          fi
-
-          if [ -z "$EC2_SSH_KEY" ]; then
-            echo "EC2_SSH_KEY secret is missing"
-            exit 1
-          fi
-
-          if [ -z "$EC2_USER" ]; then
-            echo "EC2_USER secret is missing"
-            exit 1
-          fi
-
-          if [ -z "$TARGET_DIR" ]; then
-            echo "TARGET_DIR secret is missing"
-            exit 1
-          fi
-
           mkdir -p ~/.ssh
-          printf "%s\n" "$EC2_SSH_KEY" > ~/.ssh/ec2_key.pem
-          chmod 600 ~/.ssh/ec2_key.pem
-          ssh-keyscan -H "$EC2_HOST" >> ~/.ssh/known_hosts
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Deploy Website to EC2
-        env:
-          EC2_HOST: ${{ secrets.EC2_HOST }}
-          EC2_USER: ${{ secrets.EC2_USER }}
-          TARGET_DIR: ${{ secrets.TARGET_DIR }}
+      - name: Upload website files to EC2 temp directory
         run: |
-          rsync -avz --delete -e "ssh -i ~/.ssh/ec2_key.pem" ./site/ "$EC2_USER@$EC2_HOST:$TARGET_DIR/"
+          rsync -avz --delete \
+            --exclude ".git" \
+            --exclude ".github" \
+            ./ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/tmp/jet-site/
 
-      - name: Reload NGINX
-        env:
-          EC2_HOST: ${{ secrets.EC2_HOST }}
-          EC2_USER: ${{ secrets.EC2_USER }}
+      - name: Deploy website on EC2
         run: |
-          ssh -i ~/.ssh/ec2_key.pem "$EC2_USER@$EC2_HOST" "sudo systemctl reload nginx"
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
+            mkdir -p /tmp/jet-site
+            sudo mkdir -p ${{ secrets.TARGET_DIR }}
+            sudo rsync -av --delete /tmp/jet-site/ ${{ secrets.TARGET_DIR }}/
+            sudo chown -R www-data:www-data ${{ secrets.TARGET_DIR }}
+            sudo nginx -t
+            sudo systemctl reload nginx
+          EOF
