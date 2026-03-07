@@ -13,17 +13,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Debug repository structure
-        run: |
-          pwd
-          ls -la
-          find . -maxdepth 3 -type f
-
       - name: Verify required files
         run: |
-          test -f ./Top-gun/index.html
-          test -f ./Top-gun/style.css
-          test -f ./Top-gun/assets/hero.jpg
+          test -f index.html
+          test -f style.css
+          test -f assets/topgun-bg.png
 
       - name: Setup SSH
         run: |
@@ -34,19 +28,19 @@ jobs:
 
       - name: Upload website files to EC2 temp directory
         run: |
-          ssh -i ~/.ssh/id_ed25519 ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "mkdir -p /tmp/jet-site"
           rsync -avz --delete \
-            -e "ssh -i ~/.ssh/id_ed25519" \
             --exclude ".git" \
             --exclude ".github" \
-            ./Top-gun/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/tmp/jet-site/
+            ./ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/tmp/top-gun-site/
 
       - name: Deploy website on EC2
         run: |
-          ssh -i ~/.ssh/id_ed25519 ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
-            sudo mkdir -p ${{ secrets.TARGET_DIR }}
-            sudo rsync -av --delete /tmp/jet-site/ ${{ secrets.TARGET_DIR }}/
-            sudo chown -R www-data:www-data ${{ secrets.TARGET_DIR }}
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            sudo mkdir -p /var/www/top-gun-site
+            sudo rsync -av --delete /tmp/top-gun-site/ /var/www/top-gun-site/
+            sudo chown -R www-data:www-data /var/www/top-gun-site
+            sudo find /var/www/top-gun-site -type d -exec chmod 755 {} \;
+            sudo find /var/www/top-gun-site -type f -exec chmod 644 {} \;
             sudo nginx -t
             sudo systemctl reload nginx
           EOF
