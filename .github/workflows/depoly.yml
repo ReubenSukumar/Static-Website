@@ -17,7 +17,7 @@ jobs:
         run: |
           test -f Top-gun/index.html
           test -f Top-gun/style.css
-          test -f Top-gun/assests/hero.jpg 
+          test -f Top-gun/assests/hero.jpg
 
       - name: Setup SSH
         run: |
@@ -39,8 +39,7 @@ jobs:
             sudo mkdir -p /var/www/top-gun-site
             sudo rsync -av --delete /tmp/top-gun-site/ /var/www/top-gun-site/
             sudo chown -R www-data:www-data /var/www/top-gun-site
-            sudo find /var/www/top-gun-site -type d -exec chmod 755 {} \;
-            sudo find /var/www/top-gun-site -type f -exec chmod 644 {} \;
-            sudo nginx -t 
+            sudo chmod -R 755 /var/www/top-gun-site
+            sudo nginx -t
             sudo systemctl reload nginx
           EOF
