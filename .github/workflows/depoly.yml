@@ -41,6 +41,6 @@ jobs:
             sudo chown -R www-data:www-data /var/www/top-gun-site
             sudo find /var/www/top-gun-site -type d -exec chmod 755 {} \;
             sudo find /var/www/top-gun-site -type f -exec chmod 644 {} \;
-            sudo nginx -t
+            sudo nginx -t 
             sudo systemctl reload nginx
           EOF
