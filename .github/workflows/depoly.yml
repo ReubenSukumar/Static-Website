@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - testing
 
 jobs:
   deploy:
@@ -17,7 +18,7 @@ jobs:
         run: |
           test -f Top-gun/index.html
           test -f Top-gun/style.css
-          test -f Top-gun/assets/hero.jpg
+          test -f Top-gun/assets/JW.jpg
 
       - name: Setup SSH
         run: |
@@ -25,6 +26,17 @@ jobs:
           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Set target directory based on branch
+        run: |
+          if [ "${GITHUB_REF_NAME}" = "main" ]; then
+            echo "TARGET_DIR=/var/www/top-gun-site" >> $GITHUB_ENV
+          elif [ "${GITHUB_REF_NAME}" = "testing" ]; then
+            echo "TARGET_DIR=/var/www/top-gun-site-test" >> $GITHUB_ENV
+          else
+            echo "Unsupported branch: ${GITHUB_REF_NAME}"
+            exit 1
+          fi
 
       - name: Upload website files to EC2 temp directory
         run: |
@@ -35,11 +47,11 @@ jobs:
 
       - name: Deploy website on EC2
         run: |
-          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            sudo mkdir -p /var/www/top-gun-site
-            sudo rsync -av --delete /tmp/top-gun-site/ /var/www/top-gun-site/
-            sudo chown -R www-data:www-data /var/www/top-gun-site
-            sudo chmod -R 755 /var/www/top-gun-site
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
+            sudo mkdir -p ${TARGET_DIR}
+            sudo rsync -av --delete /tmp/top-gun-site/ ${TARGET_DIR}/
+            sudo chown -R www-data:www-data ${TARGET_DIR}
+            sudo chmod -R 755 ${TARGET_DIR}
             sudo nginx -t
             sudo systemctl reload nginx
           EOF
