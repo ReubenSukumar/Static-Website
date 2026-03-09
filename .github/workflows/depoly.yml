@@ -17,7 +17,7 @@ jobs:
         run: |
           test -f Top-gun/index.html
           test -f Top-gun/style.css
-          test -f Top-gun/assests/hero.jpg
+          test -f Top-gun/assets/hero.jpg
 
       - name: Setup SSH
         run: |
