@@ -12,7 +12,7 @@ html, body {
 body {
   position: relative;
   min-height: 100vh;
-  background: url("assests/hero.jpg") center center / cover no-repeat fixed;
+  background: url("assets/hero.jpg") center center / cover no-repeat fixed;
   color: white;
   overflow: hidden;
 }
