@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - testing
+      - Testing
 
 jobs:
   deploy:
@@ -31,7 +31,7 @@ jobs:
         run: |
           if [ "${GITHUB_REF_NAME}" = "main" ]; then
             echo "TARGET_DIR=/var/www/top-gun-site" >> $GITHUB_ENV
-          elif [ "${GITHUB_REF_NAME}" = "testing" ]; then
+          elif [ "${GITHUB_REF_NAME}" = "Testing" ]; then
             echo "TARGET_DIR=/var/www/top-gun-site-test" >> $GITHUB_ENV
           else
             echo "Unsupported branch: ${GITHUB_REF_NAME}"
