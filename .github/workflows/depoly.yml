@@ -20,7 +20,7 @@ jobs:
           test -f Top-gun/style.css
           test -f Top-gun/assets/JW.jpg
 
-      - name: Setup SSH
+      - name: Setup SSH 
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_ed25519
