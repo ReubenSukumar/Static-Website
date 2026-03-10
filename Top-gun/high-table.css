@@ -62,14 +62,16 @@ body {
 }
 
 .title {
-  font-size: clamp(2.4rem, 4.3vw, 4rem);
-  line-height: 0.9;
-  letter-spacing: 0.05rem;
-  margin-bottom: 0.9rem;
+  font-size: clamp(2.2rem, 3.6vw, 3.2rem);
+  line-height: 1.1;
+  letter-spacing: 0.35rem;
+  margin-bottom: 1rem;
   color: #f6f0de;
+  white-space: nowrap;
+
   text-shadow:
-    0 0 10px rgba(212, 175, 55, 0.16),
-    0 0 20px rgba(122, 15, 24, 0.16);
+    0 0 10px rgba(212,175,55,0.18),
+    0 0 20px rgba(122,15,24,0.18);
 }
 
 .subtitle {
