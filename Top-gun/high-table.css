@@ -70,8 +70,9 @@ body {
   white-space: nowrap;
 
   text-shadow:
-    0 0 10px rgba(212,175,55,0.18),
-    0 0 20px rgba(122,15,24,0.18);
+    0 0 6px rgba(212,175,55,0.25),
+    0 0 20px rgba(122,15,24,0.25),
+    0 0 40px rgba(122,15,24,0.15);
 }
 
 .subtitle {
