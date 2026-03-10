@@ -156,30 +156,92 @@ color:#ff2b2b;
 
 /* BUTTON */
 
-.actions{
-margin-top:40px;
+.actions {
+  margin-top: 42px;
+  display: flex;
+  justify-content: center;
 }
 
-.return-btn{
-display:inline-block;
-padding:15px 28px;
-border-radius:999px;
-font-weight:700;
-background:linear-gradient(180deg,#e01919,#ab0808);
-border:1px solid rgba(255,135,135,.34);
-color:#fff;
-text-decoration:none;
-box-shadow:
-0 10px 26px rgba(130,0,0,.34),
-0 0 18px rgba(255,0,0,.2);
-transition:.25s;
+.return-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 30px;
+  min-width: 320px;
+  justify-content: center;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #ffeaea;
+  background: linear-gradient(180deg, rgba(92, 0, 0, 0.92) 0%, rgba(58, 0, 0, 0.96) 100%);
+  border: 1px solid rgba(255, 72, 72, 0.45);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 120, 120, 0.12),
+    0 0 0 1px rgba(255, 30, 30, 0.05),
+    0 8px 24px rgba(255, 0, 0, 0.12);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-.return-btn:hover{
-transform:translateY(-2px);
-box-shadow:
-0 14px 30px rgba(130,0,0,.42),
-0 0 22px rgba(255,0,0,.25);
+.return-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 70, 70, 0.08) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  transition: transform 0.45s ease;
+}
+
+.return-btn:hover {
+  transform: translateY(-2px);
+  color: #fff5f5;
+  border-color: rgba(255, 110, 110, 0.68);
+  background: linear-gradient(180deg, rgba(118, 0, 0, 0.96) 0%, rgba(72, 0, 0, 0.98) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 145, 145, 0.16),
+    0 0 18px rgba(255, 20, 20, 0.18),
+    0 10px 30px rgba(255, 0, 0, 0.16);
+}
+
+.return-btn:hover::before {
+  transform: translateX(100%);
+}
+
+.return-btn:active {
+  transform: translateY(0);
+}
+
+.return-btn .arrow {
+  font-size: 1rem;
+  color: #ffb347;
+  line-height: 1;
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.return-btn:hover .arrow {
+  transform: translateX(-3px);
+  color: #ffd27a;
+}
+
+@media (max-width: 640px) {
+  .return-btn {
+    min-width: auto;
+    width: 100%;
+    padding: 15px 22px;
+  }
 }
 
 /* EFFECTS */
