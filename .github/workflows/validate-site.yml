@@ -1,0 +1,24 @@
+name: Validate Static Website Files
+
+on:
+  push:
+    branches:
+      - main
+      - Testing
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify required files
+        run: |
+          test -f Top-gun/index.html
+          test -f Top-gun/style.css
+          test -f Top-gun/assets/JW.jpg
+
+      - name: Validation success
+        run: echo "All required static website files are present."
