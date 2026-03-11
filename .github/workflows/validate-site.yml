@@ -5,6 +5,9 @@ on:
     branches:
       - main
       - Testing
+      - Test-Feature
+      - Deployment
+      - Test-UI
 
 jobs:
   validate:
