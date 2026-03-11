@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - Testing
+      - Deployment
 
 jobs:
   deploy:
@@ -33,6 +34,8 @@ jobs:
             echo "TARGET_DIR=/var/www/top-gun-site" >> $GITHUB_ENV
           elif [ "${GITHUB_REF_NAME}" = "Testing" ]; then
             echo "TARGET_DIR=/var/www/top-gun-site-test" >> $GITHUB_ENV
+          elif [ "${GITHUB_REF_NAME}" = "Deployment" ]; then
+            echo "TARGET_DIR=/var/www/top-gun-site-Deployment" >> $GITHUB_ENV            
           else
             echo "Unsupported branch: ${GITHUB_REF_NAME}"
             exit 1
