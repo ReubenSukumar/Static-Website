@@ -1,23 +1,36 @@
 name: Deploy Static Website to EC2
 
 on:
-  push:
+  workflow_run:
+    workflows:
+      - Validate Static Website Files
+    types:
+      - completed
     branches:
-      - main
+      - Testing
 
 jobs:
   deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set branch name from triggering workflow
+        run: echo "BRANCH_NAME=${{ github.event.workflow_run.head_branch }}" >> $GITHUB_ENV
+
+      - name: Checkout triggering branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.BRANCH_NAME }}
+
       - name: Verify required files
         run: |
           test -f Top-gun/index.html
           test -f Top-gun/style.css
-          test -f Top-gun/assets/hero.jpg
+          test -f Top-gun/assets/JW.jpg
 
       - name: Setup SSH
         run: |
