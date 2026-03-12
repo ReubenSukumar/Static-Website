@@ -2,7 +2,7 @@ name: Deploy Deployment Branch on Schedule
 
 on:
   schedule:
-    - cron: '11 10 * * *' #Custom cron
+    - cron: '30 10 * * *'
 
 jobs:
   deploy_deployment_branch_on_schedule:
@@ -12,6 +12,13 @@ jobs:
       - name: Print trigger info
         run: |
           echo "Triggered by schedule"
+          date -u
+
+      - name: Print trigger details
+        run: |
+          echo "Triggered by: ${{ github.event_name }}"
+          echo "Repository default-branch workflow is running"
+          echo "UTC now:"
           date -u
 
       - name: Set Deployment branch variables
