@@ -2,13 +2,18 @@ name: Deploy Deployment Branch on Schedule
 
 on:
   schedule:
-    - cron: '3,8,13,18,23,28,33,38,43,48,53,58 * * * *'
+    - cron: '7,17,27,37,47,57 * * * *'
 
 jobs:
   deploy_deployment_branch_on_schedule:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Print trigger info
+        run: |
+          echo "Triggered by schedule"
+          date -u
+
       - name: Set Deployment branch variables
         run: |
           echo "BRANCH_NAME=Deployment" >> $GITHUB_ENV
