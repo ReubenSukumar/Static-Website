@@ -2,7 +2,7 @@ name: Deploy Deployment Branch on Schedule
 
 on:
   schedule:
-    - cron: '3,8,13,18,23,28,33,38,43,48,53,58 * * * *' #Runs every 5 minutes
+    - cron: '0 10 * * *' #Custom cron
 
 jobs:
   deploy_deployment_branch_on_schedule:
