@@ -50,6 +50,8 @@ jobs:
             echo "TARGET_DIR=/var/www/top-gun-site-Test-UI" >> $GITHUB_ENV
           elif [ "${BRANCH_NAME}" = "Test-Feature" ]; then
             echo "TARGET_DIR=/var/www/top-gun-site-Test-Feature" >> $GITHUB_ENV
+          elif [ "${BRANCH_NAME}" = "Deployment" ]; then
+            echo "TARGET_DIR=/var/www/top-gun-site-Deployment" >> $GITHUB_ENV            
           else
             echo "Unsupported branch: ${BRANCH_NAME}"
             exit 1
