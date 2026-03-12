@@ -14,7 +14,7 @@ on:
       - Deployment
 
   schedule:
-    - cron: '*/5 * * * *'  # Runs every 5 Minutes
+    - cron: '3,8,13,18,23,28,33,38,43,48,53,58 * * * *'  # Runs every 5 Minutes
 
 jobs:
   deploy_from_validation:
