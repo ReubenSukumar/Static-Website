@@ -11,6 +11,7 @@ on:
       - Testing
       - Test-UI
       - Test-Feature
+      - Deployment
 
 jobs:
   deploy:
