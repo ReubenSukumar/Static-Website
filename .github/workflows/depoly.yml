@@ -14,7 +14,7 @@ on:
       - Deployment
 
   schedule:
-    - cron: 55 6 * * *  # 12:25 PM IST = 06:55 UTC
+    - cron: '8 7 * * *'  # 12:25 PM IST = 06:55 UTC
 
 jobs:
   deploy_from_validation:
