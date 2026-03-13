@@ -2,7 +2,7 @@ name: Deploy Deployment Branch on Schedule
 
 on:
   schedule:
-    - cron: '32 12 * * *'
+    - cron: '02 6 * * *'
 
 jobs:
   deploy_deployment_branch_on_schedule:
